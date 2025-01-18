@@ -3,7 +3,7 @@
 1. **Clonar o projeto.**  
 2. **Criar máquina virtual com Python versão 3.11**, baixando as dependências do `requirements.txt`.  
 3. **Criar um `.env` na raiz do projeto** com os dados do banco.  
-4. **Rodar o comando:**  
+4. **Rodar servidor com o comando:**  
    ```bash
    python -m uvicorn main:app --reload
 

@@ -17,8 +17,8 @@ class PesoRepository(BaseRepository):
         return rows
 
     async def get_by_id(self, id: int) -> Optional[Peso]:
-        query = "SELECT * FROM peso WHERE id = $1"
-        row = await self.db.fetchrow(query, id)
+        query = "SELECT * FROM peso WHERE id_usuario = $1"
+        row = await self.db.fetch(query, id)
         return row
 
     async def remove(self, id: int):

@@ -6,12 +6,12 @@ from domain.repositories.base_repo import BaseRepository
 class PlanoAlimentarRepository(BaseRepository):
     async def salvar(self, plano_alimentar: PlanoAlimentar, id_usuario: int):
         query = """
-        INSERT INTO plano_alimentar (nome, id_usuario, id_nutricionista, tag, horario_refeicao, descricao)
-        VALUES ($1, $2, $3, $4, $5, $6)
+        INSERT INTO plano_alimentar (nome, id_usuario, id_nutricionista, tag, horario_refeicao, descricao, periodoDoDia)
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         """
         await self.db.execute(query, plano_alimentar.nome, id_usuario, 
                               None, plano_alimentar.tag, 
-                              plano_alimentar.horario_refeicao, plano_alimentar.descricao)
+                              plano_alimentar.horario_refeicao, plano_alimentar.descricao, plano_alimentar.periodoDoDia)
 
 
     async def get_all(self) -> List[PlanoAlimentar]:
@@ -31,9 +31,8 @@ class PlanoAlimentarRepository(BaseRepository):
     async def update(self, plano_alimentar: PlanoAlimentar, id_plano: int):
         query = """
         UPDATE plano_alimentar
-        SET nome = $1, tag = $2, horario_refeicao = $3, descricao = $4
+        SET nome = $1, tag = $2, descricao = $3, periodoDoDia = $4
         WHERE id = $5
         """
-        await self.db.execute(query, plano_alimentar.nome, 
-                              plano_alimentar.tag, plano_alimentar.horario_refeicao,
-                              plano_alimentar.descricao, id_plano)
+        await self.db.execute(query, plano_alimentar.nome, plano_alimentar.tag,
+                              plano_alimentar.descricao, plano_alimentar.periodoDoDia, id_plano)

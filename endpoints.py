@@ -26,18 +26,17 @@ async def registrar_usuario(user: User, db = Depends(get_db)):
 
     return {"message": "Usuário registrado com sucesso!"}
 
-@router.get("/login")
+@router.post("/login")
 async def login(email_senha: EmailSenha, db = Depends(get_db)):
      user_repo = UserRepository(db)
      email = email_senha.email
      senha = email_senha.senha
-     print(email, senha)
      user = await user_repo.get_by_email_senha(email, senha)
-     
+     print(user)
      if not user:
          raise HTTPException(status_code=401, detail="Usuário ou senha inválidos.")
      
-     return {"message": "Login realizado com sucesso!"}
+     return {"id": user["id"], "name": user["name"]}
  
 #Meta Peso
 @router.get("/metas-peso/registrar/{id_usuario}")
@@ -53,7 +52,7 @@ async def get_metas_peso(id_usuario: int = Path(..., title="ID do Usuário"), db
      metas_peso = await meta_peso_repo.get_by_id(id_usuario)
      
      if not metas_peso:
-         raise HTTPException(status_code=404, detail="Metas de Peso não encontradas para este usuário.")
+         raise HTTPException(status_code=200, detail="Metas de Peso não encontradas para este usuário.")
      
      return metas_peso
  
@@ -99,7 +98,7 @@ async def delete_plano(id_plano_alimentar: int = Path(..., title="ID do Plano Al
 @router.post("/planos-alimentares/update/{id_plano_alimentar}")
 async def update_plano(plano_alimentar: PlanoAlimentar, id_plano_alimentar: int = Path(..., title="ID do Plano Alimentar"),  db = Depends(get_db)):
      plano_alimentar_repo = PlanoAlimentarRepository(db)
-     await plano_alimentar_repo.update(id_plano_alimentar, plano_alimentar)
+     await plano_alimentar_repo.update(plano_alimentar, id_plano_alimentar)
      
      return {"message": "Plano Alimentar atualizado com sucesso!"}
 
@@ -134,4 +133,35 @@ async def update_medicacao(medicacao: Medicacao, id_medicacao: int = Path(..., t
      await medicacao_repo.update(id_medicacao, medicacao)
      
      return {"message": "Medicação atualizada com sucesso!"}
- 
+
+#Post
+@router.post("/pesos/registrar/{id_usuario}")
+async def registrar_peso(peso: Peso, id_usuario: int = Path(..., title="ID do Usuário"), db = Depends(get_db)):
+     peso_repo = PesoRepository(db)
+     await peso_repo.salvar(peso, id_usuario)
+     
+     return {"message": "Peso registrado com sucesso!"}
+
+@router.get("/pesos/get/{id_usuario}")
+async def get_pesos(id_usuario: int = Path(..., title="ID do Usuário"), db = Depends(get_db)):
+     peso_repo = PesoRepository(db)
+     pesos = await peso_repo.get_by_id(id_usuario)
+     
+     if not pesos:
+         raise HTTPException(status_code=200, detail="Pesos não encontrados para este usuário.")
+     
+     return pesos
+
+@router.post("/pesos/delete/{id_peso}")
+async def delete_peso(id_peso: int = Path(..., title="ID do Peso"), db = Depends(get_db)):
+     peso_repo = PesoRepository(db)
+     await peso_repo.remove(id_peso)
+     
+     return {"message": "Peso excluído com sucesso!"}
+
+@router.post("/pesos/update/{id_peso}")
+async def update_peso(peso: Peso, id_peso: int = Path(..., title="ID do Peso"),  db = Depends(get_db)):
+     peso_repo = PesoRepository(db)
+     await peso_repo.update(id_peso, peso)
+     
+     return {"message": "Peso atualizado com sucesso!"}

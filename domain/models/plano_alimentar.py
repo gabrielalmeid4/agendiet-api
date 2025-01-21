@@ -5,7 +5,7 @@ from typing import Optional
 class PlanoAlimentar(BaseModel):
     nome: str
     tag: str
-    horario_refeicao: str  
+    periodoDoDia: str  
     descricao: str
 
     class Config:

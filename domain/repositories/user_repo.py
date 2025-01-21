@@ -22,7 +22,7 @@ class UserRepository(BaseRepository):
         return dict(row) if row else None
     
     async def get_by_email_senha(self, email: str, senha: str) -> Optional[User]:
-        query = "SELECT id FROM users WHERE email = $1 AND password = $2"
+        query = "SELECT id, name FROM users WHERE email = $1 AND password = $2"
         row = await self.db.fetchrow(query, email, senha)
         return dict(row) if row else None
 

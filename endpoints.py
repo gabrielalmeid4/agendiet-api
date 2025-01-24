@@ -39,7 +39,7 @@ async def login(email_senha: EmailSenha, db = Depends(get_db)):
      return {"id": user["id"], "name": user["name"]}
  
 #Meta Peso
-@router.get("/metas-peso/registrar/{id_usuario}")
+@router.post("/metas-peso/registrar/{id_usuario}")
 async def registrar_meta_peso(meta_peso: MetaPeso, id_usuario: int = Path(..., title="ID do Usuário"),  db = Depends(get_db)):
      meta_peso_repo = MetaPesoRepository(db)
      await meta_peso_repo.salvar(meta_peso, id_usuario)
@@ -58,15 +58,15 @@ async def get_metas_peso(id_usuario: int = Path(..., title="ID do Usuário"), db
  
 @router.post("/metas-peso/delete/{id_meta_peso}")
 async def delete_meta_peso(id_meta_peso: int = Path(..., title="ID da Meta de Peso"), db = Depends(get_db)):
-     plano_alimentar_repo = PlanoAlimentarRepository(db)
-     await plano_alimentar_repo.remove(id_meta_peso)
+     meta_peso_repo = MetaPesoRepository(db)
+     await meta_peso_repo.remove(id_meta_peso)
      
      return {"message": "Meta de Peso excluída com sucesso!"}
  
 @router.post("/metas-peso/update/{id_meta_peso}")
 async def update_meta_peso(meta_peso: MetaPeso, id_meta_peso: int = Path(..., title="ID da Meta de Peso"),  db = Depends(get_db)):
-     plano_alimentar_repo = PlanoAlimentarRepository(db)
-     await plano_alimentar_repo.update(id_meta_peso, meta_peso)
+     meta_peso_repo = MetaPesoRepository(db)
+     await meta_peso_repo.update(meta_peso, id_meta_peso)
      
      return {"message": "Meta de Peso atualizada com sucesso!"}
  
@@ -162,6 +162,6 @@ async def delete_peso(id_peso: int = Path(..., title="ID do Peso"), db = Depends
 @router.post("/pesos/update/{id_peso}")
 async def update_peso(peso: Peso, id_peso: int = Path(..., title="ID do Peso"),  db = Depends(get_db)):
      peso_repo = PesoRepository(db)
-     await peso_repo.update(id_peso, peso)
+     await peso_repo.update(peso, id_peso)
      
      return {"message": "Peso atualizado com sucesso!"}

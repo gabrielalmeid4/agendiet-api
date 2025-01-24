@@ -6,12 +6,12 @@ from domain.repositories.base_repo import BaseRepository
 class PlanoAlimentarRepository(BaseRepository):
     async def salvar(self, plano_alimentar: PlanoAlimentar, id_usuario: int):
         query = """
-        INSERT INTO plano_alimentar (nome, id_usuario, id_nutricionista, tag, horario_refeicao, descricao, periodoDoDia)
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        INSERT INTO plano_alimentar (nome, id_usuario, id_nutricionista, tag, descricao, periodoDoDia)
+        VALUES ($1, $2, $3, $4, $5, $6)
         """
         await self.db.execute(query, plano_alimentar.nome, id_usuario, 
                               None, plano_alimentar.tag, 
-                              plano_alimentar.horario_refeicao, plano_alimentar.descricao, plano_alimentar.periodoDoDia)
+                              plano_alimentar.descricao, plano_alimentar.periodoDoDia)
 
 
     async def get_all(self) -> List[PlanoAlimentar]:

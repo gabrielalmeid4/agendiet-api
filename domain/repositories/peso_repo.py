@@ -27,8 +27,8 @@ class PesoRepository(BaseRepository):
 
     async def update(self, peso: Peso, id_peso: int):
         query = """
-        UPDATE peso
-        peso = $1, data = $2
+        UPDATE peso 
+        SET peso = $1, data = $2
         WHERE id = $3
         """
         await self.db.execute(query, peso.peso, peso.data, id_peso)

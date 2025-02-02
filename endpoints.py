@@ -88,12 +88,12 @@ async def get_planos_alimentares(id_usuario: int = Path(..., title="ID do Usuár
      
      return planos_alimentares
 
-@router.post("/planos-alimentares/delete/{id_plano_alimentar}")
+@router.delete("/planos-alimentares/delete/{id_plano_alimentar}")
 async def delete_plano(id_plano_alimentar: int = Path(..., title="ID do Plano Alimentar"), db = Depends(get_db)):
-     plano_alimentar_repo = PlanoAlimentarRepository(db)
-     await plano_alimentar_repo.remove(id_plano_alimentar)
-     
-     return {"message": "Plano Alimentar excluído com sucesso!"}
+    plano_alimentar_repo = PlanoAlimentarRepository(db)
+    await plano_alimentar_repo.remove(id_plano_alimentar)
+    
+    return {"message": "Plano Alimentar excluído com sucesso!"}
  
 @router.post("/planos-alimentares/update/{id_plano_alimentar}")
 async def update_plano(plano_alimentar: PlanoAlimentar, id_plano_alimentar: int = Path(..., title="ID do Plano Alimentar"),  db = Depends(get_db)):

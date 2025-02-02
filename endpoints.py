@@ -159,6 +159,16 @@ async def delete_peso(id_peso: int = Path(..., title="ID do Peso"), db = Depends
      
      return {"message": "Peso excluído com sucesso!"}
 
+@router.get("/pesos/latest/{id_usuario}")
+async def get_latest_peso(id_usuario: int = Path(..., title="ID do Usuário"), db = Depends(get_db)):
+    peso_repo = PesoRepository(db)
+    latest_peso = await peso_repo.get_latest(id_usuario)
+    
+    if not latest_peso:
+        raise HTTPException(status_code=404, detail="Nenhum peso registrado para este usuário.")
+    
+    return latest_peso
+
 @router.post("/pesos/update/{id_peso}")
 async def update_peso(peso: Peso, id_peso: int = Path(..., title="ID do Peso"),  db = Depends(get_db)):
      peso_repo = PesoRepository(db)

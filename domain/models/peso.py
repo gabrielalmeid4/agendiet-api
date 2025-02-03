@@ -6,4 +6,3 @@ class Peso(BaseModel):
 
     class Config:
         orm_mode = True
-

@@ -6,7 +6,7 @@ from domain.repositories.base_repo import BaseRepository
 class PlanoAlimentarRepository(BaseRepository):
     async def salvar(self, plano_alimentar: PlanoAlimentar, id_usuario: int):
         query = """
-        INSERT INTO plano_alimentar (nome, id_usuario, id_nutricionista, tag, descricao, horario, dia )
+        INSERT INTO plano_alimentar (nome, id_usuario, id_nutricionista, tag, descricao, horario, dia)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
         """
         await self.db.execute(query, plano_alimentar.nome, id_usuario, 
@@ -19,9 +19,9 @@ class PlanoAlimentarRepository(BaseRepository):
         rows = await self.db.fetch(query)
         return rows
 
-    async def get_by_id(self, id_usuario: int) -> Optional[PlanoAlimentar]:
-        query = "SELECT * FROM plano_alimentar WHERE id_usuario = $1"
-        rows= await self.db.fetch(query, id_usuario)
+    async def get_by_id(self, id_usuario: int, dia: str) -> Optional[PlanoAlimentar]:
+        query = "SELECT * FROM plano_alimentar WHERE id_usuario = $1 AND dia = $2"
+        rows= await self.db.fetch(query, id_usuario, dia)
         return rows
 
     async def remove(self, id: str):
@@ -36,8 +36,3 @@ class PlanoAlimentarRepository(BaseRepository):
         """
         await self.db.execute(query, plano_alimentar.nome, plano_alimentar.tag,
                               plano_alimentar.descricao, plano_alimentar.horario, plano_alimentar.dia, id_plano)
-
-    async def get_by_dia(self, id_usuario: int, dia: str) -> List[PlanoAlimentar]:
-        query = "SELECT * FROM plano_alimentar WHERE id_usuario = $1 AND dia = $2"
-        rows = await self.db.fetch(query, id_usuario, dia)
-        return [PlanoAlimentar(**dict(row)) for row in rows]

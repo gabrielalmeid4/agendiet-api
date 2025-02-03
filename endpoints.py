@@ -1,6 +1,5 @@
 from config import get_db
 from fastapi import APIRouter, HTTPException, Depends, Path
-from typing import List
 
 from domain.models.medicacao import Medicacao
 from domain.models.meta_peso import MetaPeso
@@ -16,7 +15,6 @@ from domain.repositories.user_repo import UserRepository
 from domain.models.email_senha import EmailSenha
 
 router = APIRouter()
-
 
 #Usuarios
 @router.post("/registrar-usuario")
@@ -79,10 +77,12 @@ async def registrar_plano(plano_alimentar: PlanoAlimentar, id_usuario: int = Pat
      
      return {"message": "Plano Alimentar registrado com sucesso!"}
  
-@router.get("/planos-alimentares/get/{id_usuario}")
-async def get_planos_alimentares(id_usuario: int = Path(..., title="ID do Usuário"), db = Depends(get_db)):
+@router.get("/planos-alimentares/get/{id_usuario}/{dia}")
+async def get_planos_alimentares(id_usuario: int = Path(..., title="ID do Usuário"), 
+                                 dia: str = Path(..., title="Dia da Semana"),
+                                 db = Depends(get_db)):
      plano_alimentar_repo = PlanoAlimentarRepository(db)
-     planos_alimentares = await plano_alimentar_repo.get_by_id(id_usuario)
+     planos_alimentares = await plano_alimentar_repo.get_by_id(id_usuario, dia)
      
      if not planos_alimentares:
          raise HTTPException(status_code=404, detail="Plano Alimentar não encontrado para este usuário.")
@@ -176,11 +176,3 @@ async def update_peso(peso: Peso, id_peso: int = Path(..., title="ID do Peso"), 
      await peso_repo.update(peso, id_peso)
      
      return {"message": "Peso atualizado com sucesso!"}
-
-@router.get("/planos-alimentares/{id_usuario}/dia/{dia}", response_model=List[PlanoAlimentar])
-async def get_planos_alimentares_by_dia(id_usuario: int, dia: str, db = Depends(get_db)):
-    repo = PlanoAlimentarRepository(db)
-    planos = await repo.get_by_dia(id_usuario, dia)
-    if not planos:
-        raise HTTPException(status_code=404, detail="Nenhum plano alimentar encontrado para o dia especificado")
-    return planos

@@ -27,13 +27,16 @@ class MedicacaoRepository(BaseRepository):
         query = "DELETE FROM medicacao WHERE id_medicacao = $1"
         await self.db.execute(query, id_medicacao)
         
-    async def update(self, medicacao: Medicacao, id_medicacao: int):
+    async def update(self, id_medicacao: int, medicacao: Medicacao):
         query = """
         UPDATE medicacao
         SET nome = $2, dosagem_unica = $3, intervalo = $4,
             data_inicio = $5, data_fim = $6, horario_inicio = $7
         WHERE id_medicacao = $1
         """
+        
+        print(medicacao)
+        
         await self.db.execute(query, id_medicacao, medicacao.nome,
                               medicacao.dosagem_unica, medicacao.intervalo, medicacao.data_inicio,
                               medicacao.data_fim, medicacao.horario_inicio)

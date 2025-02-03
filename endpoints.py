@@ -1,5 +1,6 @@
 from config import get_db
 from fastapi import APIRouter, HTTPException, Depends, Path
+from typing import List
 
 from domain.models.medicacao import Medicacao
 from domain.models.meta_peso import MetaPeso
@@ -175,3 +176,11 @@ async def update_peso(peso: Peso, id_peso: int = Path(..., title="ID do Peso"), 
      await peso_repo.update(peso, id_peso)
      
      return {"message": "Peso atualizado com sucesso!"}
+
+@router.get("/planos-alimentares/{id_usuario}/dia/{dia}", response_model=List[PlanoAlimentar])
+async def get_planos_alimentares_by_dia(id_usuario: int, dia: str, db = Depends(get_db)):
+    repo = PlanoAlimentarRepository(db)
+    planos = await repo.get_by_dia(id_usuario, dia)
+    if not planos:
+        raise HTTPException(status_code=404, detail="Nenhum plano alimentar encontrado para o dia especificado")
+    return planos

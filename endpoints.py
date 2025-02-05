@@ -1,4 +1,6 @@
 from config import get_db
+from domain.models.nutricionista import Nutricionista
+from domain.repositories.nutricionista_repo import NutricionistaRepository
 from fastapi import APIRouter, HTTPException, Depends, Path
 
 from domain.models.medicacao import Medicacao
@@ -15,7 +17,6 @@ from domain.repositories.user_repo import UserRepository
 from domain.models.email_senha import EmailSenha
 
 router = APIRouter()
-
 
 #Usuarios
 @router.post("/registrar-usuario")
@@ -78,22 +79,24 @@ async def registrar_plano(plano_alimentar: PlanoAlimentar, id_usuario: int = Pat
      
      return {"message": "Plano Alimentar registrado com sucesso!"}
  
-@router.get("/planos-alimentares/get/{id_usuario}")
-async def get_planos_alimentares(id_usuario: int = Path(..., title="ID do Usuário"), db = Depends(get_db)):
+@router.get("/planos-alimentares/get/{id_usuario}/{dia}")
+async def get_planos_alimentares(id_usuario: int = Path(..., title="ID do Usuário"), 
+                                 dia: str = Path(..., title="Dia da Semana"),
+                                 db = Depends(get_db)):
      plano_alimentar_repo = PlanoAlimentarRepository(db)
-     planos_alimentares = await plano_alimentar_repo.get_by_id(id_usuario)
+     planos_alimentares = await plano_alimentar_repo.get_by_id(id_usuario, dia)
      
      if not planos_alimentares:
          raise HTTPException(status_code=404, detail="Plano Alimentar não encontrado para este usuário.")
      
      return planos_alimentares
 
-@router.post("/planos-alimentares/delete/{id_plano_alimentar}")
+@router.delete("/planos-alimentares/delete/{id_plano_alimentar}")
 async def delete_plano(id_plano_alimentar: int = Path(..., title="ID do Plano Alimentar"), db = Depends(get_db)):
-     plano_alimentar_repo = PlanoAlimentarRepository(db)
-     await plano_alimentar_repo.remove(id_plano_alimentar)
-     
-     return {"message": "Plano Alimentar excluído com sucesso!"}
+    plano_alimentar_repo = PlanoAlimentarRepository(db)
+    await plano_alimentar_repo.remove(id_plano_alimentar)
+    
+    return {"message": "Plano Alimentar excluído com sucesso!"}
  
 @router.post("/planos-alimentares/update/{id_plano_alimentar}")
 async def update_plano(plano_alimentar: PlanoAlimentar, id_plano_alimentar: int = Path(..., title="ID do Plano Alimentar"),  db = Depends(get_db)):
@@ -159,9 +162,67 @@ async def delete_peso(id_peso: int = Path(..., title="ID do Peso"), db = Depends
      
      return {"message": "Peso excluído com sucesso!"}
 
+@router.get("/pesos/latest/{id_usuario}")
+async def get_latest_peso(id_usuario: int = Path(..., title="ID do Usuário"), db = Depends(get_db)):
+    peso_repo = PesoRepository(db)
+    latest_peso = await peso_repo.get_latest(id_usuario)
+    
+    if not latest_peso:
+        raise HTTPException(status_code=404, detail="Nenhum peso registrado para este usuário.")
+    
+    return latest_peso
+
 @router.post("/pesos/update/{id_peso}")
 async def update_peso(peso: Peso, id_peso: int = Path(..., title="ID do Peso"),  db = Depends(get_db)):
      peso_repo = PesoRepository(db)
      await peso_repo.update(peso, id_peso)
      
      return {"message": "Peso atualizado com sucesso!"}
+
+@router.post("/nutricionistas/registrar")
+async def registrar_nutricionista(nutricionista: Nutricionista, db=Depends(get_db)):
+    nutricionista_repo = NutricionistaRepository(db)
+    id_nutricionista = await nutricionista_repo.salvar(nutricionista)
+    
+    return {"message": "Nutricionista registrado com sucesso!", "id_nutricionista": id_nutricionista}
+
+@router.get("/nutricionistas/get")
+async def get_nutricionistas(db=Depends(get_db)):
+    nutricionista_repo = NutricionistaRepository(db)
+    nutricionistas = await nutricionista_repo.get_all()
+    
+    if not nutricionistas:
+        raise HTTPException(status_code=404, detail="Nenhum nutricionista encontrado.")
+    
+    return nutricionistas
+
+@router.get("/nutricionistas/get/{id_nutricionista}")
+async def get_nutricionista(id_nutricionista: int = Path(..., title="ID do Nutricionista"), db=Depends(get_db)):
+    nutricionista_repo = NutricionistaRepository(db)
+    nutricionista = await nutricionista_repo.get_by_id(id_nutricionista)
+    
+    if not nutricionista:
+        raise HTTPException(status_code=404, detail="Nutricionista não encontrado.")
+    
+    return nutricionista
+
+@router.post("/nutricionistas/delete/{id_nutricionista}")
+async def delete_nutricionista(id_nutricionista: int = Path(..., title="ID do Nutricionista"), db=Depends(get_db)):
+    nutricionista_repo = NutricionistaRepository(db)
+    deletado = await nutricionista_repo.delete(id_nutricionista)
+    
+    if not deletado:
+        raise HTTPException(status_code=404, detail="Nutricionista não encontrado para exclusão.")
+    
+    return {"message": "Nutricionista excluído com sucesso!"}
+
+@router.post("/nutricionistas/update/{id_nutricionista}")
+async def update_nutricionista(nutricionista: Nutricionista, id_nutricionista: int = Path(..., title="ID do Nutricionista"), db=Depends(get_db)):
+    nutricionista_repo = NutricionistaRepository(db)
+    atualizado = await nutricionista_repo.update(id_nutricionista, nutricionista)
+    
+    if not atualizado:
+        raise HTTPException(status_code=404, detail="Nutricionista não encontrado para atualização.")
+    
+    return {"message": "Nutricionista atualizado com sucesso!"}
+

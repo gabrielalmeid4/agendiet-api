@@ -16,7 +16,6 @@ from domain.models.email_senha import EmailSenha
 
 router = APIRouter()
 
-
 #Usuarios
 @router.post("/registrar-usuario")
 async def registrar_usuario(user: User, db = Depends(get_db)):
@@ -78,22 +77,24 @@ async def registrar_plano(plano_alimentar: PlanoAlimentar, id_usuario: int = Pat
      
      return {"message": "Plano Alimentar registrado com sucesso!"}
  
-@router.get("/planos-alimentares/get/{id_usuario}")
-async def get_planos_alimentares(id_usuario: int = Path(..., title="ID do Usuário"), db = Depends(get_db)):
+@router.get("/planos-alimentares/get/{id_usuario}/{dia}")
+async def get_planos_alimentares(id_usuario: int = Path(..., title="ID do Usuário"), 
+                                 dia: str = Path(..., title="Dia da Semana"),
+                                 db = Depends(get_db)):
      plano_alimentar_repo = PlanoAlimentarRepository(db)
-     planos_alimentares = await plano_alimentar_repo.get_by_id(id_usuario)
+     planos_alimentares = await plano_alimentar_repo.get_by_id(id_usuario, dia)
      
      if not planos_alimentares:
          raise HTTPException(status_code=404, detail="Plano Alimentar não encontrado para este usuário.")
      
      return planos_alimentares
 
-@router.post("/planos-alimentares/delete/{id_plano_alimentar}")
+@router.delete("/planos-alimentares/delete/{id_plano_alimentar}")
 async def delete_plano(id_plano_alimentar: int = Path(..., title="ID do Plano Alimentar"), db = Depends(get_db)):
-     plano_alimentar_repo = PlanoAlimentarRepository(db)
-     await plano_alimentar_repo.remove(id_plano_alimentar)
-     
-     return {"message": "Plano Alimentar excluído com sucesso!"}
+    plano_alimentar_repo = PlanoAlimentarRepository(db)
+    await plano_alimentar_repo.remove(id_plano_alimentar)
+    
+    return {"message": "Plano Alimentar excluído com sucesso!"}
  
 @router.post("/planos-alimentares/update/{id_plano_alimentar}")
 async def update_plano(plano_alimentar: PlanoAlimentar, id_plano_alimentar: int = Path(..., title="ID do Plano Alimentar"),  db = Depends(get_db)):
@@ -158,6 +159,16 @@ async def delete_peso(id_peso: int = Path(..., title="ID do Peso"), db = Depends
      await peso_repo.remove(id_peso)
      
      return {"message": "Peso excluído com sucesso!"}
+
+@router.get("/pesos/latest/{id_usuario}")
+async def get_latest_peso(id_usuario: int = Path(..., title="ID do Usuário"), db = Depends(get_db)):
+    peso_repo = PesoRepository(db)
+    latest_peso = await peso_repo.get_latest(id_usuario)
+    
+    if not latest_peso:
+        raise HTTPException(status_code=404, detail="Nenhum peso registrado para este usuário.")
+    
+    return latest_peso
 
 @router.post("/pesos/update/{id_peso}")
 async def update_peso(peso: Peso, id_peso: int = Path(..., title="ID do Peso"),  db = Depends(get_db)):

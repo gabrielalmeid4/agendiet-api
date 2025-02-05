@@ -32,3 +32,13 @@ class PesoRepository(BaseRepository):
         WHERE id = $3
         """
         await self.db.execute(query, peso.peso, peso.data, id_peso)
+
+    async def get_latest(self, id_usuario: int) -> Optional[Peso]:
+        query = """
+        SELECT * FROM peso 
+        WHERE id_usuario = $1 
+        ORDER BY data DESC 
+        LIMIT 1
+        """
+        row = await self.db.fetchrow(query, id_usuario)
+        return row

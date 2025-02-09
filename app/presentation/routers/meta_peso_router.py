@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, Path
 from app.presentation.controllers.meta_peso_controller import MetaPesoController
 from app.domain.models.meta_peso import MetaPeso
 
-router = APIRouter(prefix="/metas_peso", tags=["Metas de Peso"])
+router = APIRouter(prefix="/metas-peso", tags=["Metas de Peso"])
 
 meta_peso_controller = MetaPesoController()
 

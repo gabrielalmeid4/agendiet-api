@@ -11,4 +11,4 @@ Uma API feita utilizando o framework FastAPI da linguagem Python, como backend p
    ```bash
    python -m uvicorn main:app --reload
 
-5. **Acessar o http://localhost:8000/docs para ver a documentação Swagger da API, com as rotas disponíveis e o que elas esperam como Body da requisição ou na URL.**
+5. **Acessar a rota http://localhost:8000/docs para ver a documentação Swagger da API, com as rotas disponíveis e o que elas esperam como Body da requisição ou na URL.**

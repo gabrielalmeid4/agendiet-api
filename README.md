@@ -1,6 +1,6 @@
 # AgenDiet API
 
-Uma API feita utilizando o framework FastAPI da linguagem Python, como backend para ser consumido por uma aplicação Flutter. 
+Uma API feita utilizando o framework FastAPI da linguagem Python, como backend para ser consumido pela seguinte aplicação Flutter: [AgenDiet](https://github.com/marianaandrxde/agendiet).
 
 # **Como rodar**
 

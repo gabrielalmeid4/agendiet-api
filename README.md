@@ -1,4 +1,8 @@
-# **Tutorial :)**
+# AgenDiet API
+
+Uma API feita utilizando o framework FastAPI da linguagem Python, como backend para ser consumido por uma aplicação Flutter. 
+
+# **Como rodar**
 
 1. **Clonar o projeto.**  
 2. **Criar máquina virtual com Python versão 3.11**, baixando as dependências do `requirements.txt`.  
@@ -8,4 +12,3 @@
    python -m uvicorn main:app --reload
 
 5. **Acessar o http://localhost:8000/docs para ver a documentação Swagger da API, com as rotas disponíveis e o que elas esperam como Body da requisição ou na URL.**
-6. **Favor não utilizar a API em aplicações Flutter e Dart (não gosto desse framework nem dessa linguagem).**
